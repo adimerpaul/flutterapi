@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
 
 class MyHome extends StatefulWidget {
   const MyHome({super.key});
@@ -10,6 +12,22 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  void login() async {
+    var url = Uri.parse('http://localhost:8000/api/login');
+    var response = await http.post(
+      url,
+      body: {
+        'email': emailController.text,
+        'password': passwordController.text,
+      },
+    );
+    if (response.statusCode == 200) {
+      print(convert.jsonDecode(response.body));
+    } else {
+      print('Failed to login');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +52,7 @@ class _MyHomeState extends State<MyHome> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passwordController.text);
-              },
+              onPressed: login,
               child: const Text('Submit'),
             ),
           ],
